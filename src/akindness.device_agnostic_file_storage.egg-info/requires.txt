@@ -1,0 +1,10 @@
+pandas~=2.2.3
+tqdm~=4.67.1
+pytest~=8.3.4
+structlog~=24.4.0
+rich~=13.9.4
+argparse~=1.4.0
+anyascii
+arrow
+networkx~=3.4.2
+paramiko

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "akindness.device_agnostic_file_storage"
+version = "2024.1.0" # https://peps.python.org/pep-0440/
+description = ""
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pandas~=2.2.3",
+    "tqdm~=4.67.1",
+    "pytest~=8.3.4",
+    "structlog~=24.4.0",
+    "rich~=13.9.4",
+    "argparse~=1.4.0",
+    "anyascii",
+    "arrow",
+    "networkx~=3.4.2",
+    "paramiko"
+]
