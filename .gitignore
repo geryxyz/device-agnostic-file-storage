@@ -93,3 +93,4 @@ fabric.properties
 
 remarkable.*
 temp/
+/graph.graphml
