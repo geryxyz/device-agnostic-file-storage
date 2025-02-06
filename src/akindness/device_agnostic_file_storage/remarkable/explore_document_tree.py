@@ -48,6 +48,9 @@ def _get_metadata_path_collection(sftp) -> tuple[str, ...]:
 
 def assemble_file_system_graph(temp_dir: Path) -> DiGraph:
     graph = DiGraph()
+    root = "root"
+    graph.add_node(root, visibleName="root")
+    graph.add_node("trash", visibleName="trash")
     for metadata_path in temp_dir.iterdir():
         if not metadata_path.is_file() or not (metadata_path.suffix == ".metadata"):
             continue
@@ -58,10 +61,13 @@ def assemble_file_system_graph(temp_dir: Path) -> DiGraph:
             continue
         with open(metadata_path, "r", encoding="utf-8") as f:
             metadata = json.load(f)
+            if metadata.get("deleted"):
+                continue
+            parent_id: str = metadata.get("parent")
             current_id = metadata_path.stem
             metadata["id"] = current_id
             graph.add_node(current_id, **metadata)
-            parent_id: str = metadata.get("parent")
-            if parent_id.strip() != "":
-                graph.add_edge(parent_id, current_id)
+            if parent_id.strip() == "":
+                parent_id = root
+            graph.add_edge(parent_id, current_id)
     return graph
