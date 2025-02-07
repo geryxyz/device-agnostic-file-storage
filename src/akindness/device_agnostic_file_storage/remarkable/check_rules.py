@@ -1,11 +1,10 @@
 import re
 
-from networkx.classes import DiGraph, MultiDiGraph
+from networkx.classes import MultiDiGraph
 from tqdm import tqdm
 
+from akindness.device_agnostic_file_storage.check.all_check import get_all_checks
 
-def _valid_characters(graph: DiGraph, node: str) -> bool:
-    return re.match(r"^[a-zA-Z0-9_.]+$", graph.nodes[node]["visibleName"]) is not None
 
 def check(graph: MultiDiGraph, node: str) -> set[str]:
     causes = set()
@@ -14,8 +13,9 @@ def check(graph: MultiDiGraph, node: str) -> set[str]:
         if data["type"] != "child":
             continue
         causes = causes.union(check(graph, parent))
-    if not _valid_characters(graph, node):
-        causes.add(node)
+    for check_method in get_all_checks():
+        if not check_method(graph, node):
+            causes.add(node)
     return causes
 
 def check_all(graph: MultiDiGraph):
