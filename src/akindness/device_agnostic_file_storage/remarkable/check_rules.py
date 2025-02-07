@@ -24,4 +24,9 @@ def check_all(graph: MultiDiGraph):
         for cause in invalidity_causes:
             graph.add_edge(cause, node, type="invalid")
             graph.nodes[node]["valid"] = not bool(invalidity_causes)
+
+    for node in tqdm(graph.nodes, desc="Counting badness", unit="node"):
+        out_edges = graph.out_edges(node, data=True)
+        badness = sum(1 for _, _, data in out_edges if data["type"] == "invalid")
+        graph.nodes[node]["badness"] = badness
     return graph
