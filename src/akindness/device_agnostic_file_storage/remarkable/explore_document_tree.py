@@ -3,11 +3,12 @@ import shutil
 from pathlib import Path
 
 from networkx import DiGraph
+from networkx.classes import MultiDiGraph
 from paramiko.client import SSHClient
 
 from akindness.device_agnostic_file_storage.remarkable.authentication import get_remarkable_password, \
     get_remarkable_ip_address
-
+from akindness.device_agnostic_file_storage.util.graph.unique_multi_di_graph import UniqueMultiDiGraph
 
 REMARKABLE_DOCUMENTS_PATH = "/home/root/.local/share/remarkable/xochitl/"
 
@@ -47,7 +48,7 @@ def _get_metadata_path_collection(sftp) -> tuple[str, ...]:
 
 
 def assemble_file_system_graph(temp_dir: Path) -> DiGraph:
-    graph = DiGraph()
+    graph = UniqueMultiDiGraph()
     root = "root"
     graph.add_node(root, visibleName="root")
     graph.add_node("trash", visibleName="trash")
@@ -69,5 +70,5 @@ def assemble_file_system_graph(temp_dir: Path) -> DiGraph:
             graph.add_node(current_id, **metadata)
             if parent_id.strip() == "":
                 parent_id = root
-            graph.add_edge(parent_id, current_id)
+            graph.add_edge(parent_id, current_id, type="child")
     return graph
