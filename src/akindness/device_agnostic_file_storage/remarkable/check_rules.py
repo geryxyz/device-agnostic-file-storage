@@ -7,6 +7,8 @@ from akindness.device_agnostic_file_storage.check.all_check import get_all_check
 
 
 def check(graph: MultiDiGraph, node: str) -> set[str]:
+    if node == "root" or node == "trash":
+        return set()
     causes = set()
     for parent, current, data in graph.in_edges(node, data=True):
         assert current == node
@@ -20,10 +22,14 @@ def check(graph: MultiDiGraph, node: str) -> set[str]:
 
 def check_all(graph: MultiDiGraph):
     for node in tqdm(graph.nodes, desc="Checking nodes", unit="node"):
+        if node == "root" or node == "trash":
+            continue
         invalidity_causes = check(graph, node)
+        graph.nodes[node]["valid"] = not bool(invalidity_causes)
         for cause in invalidity_causes:
+            if cause == "root" or cause == "trash":
+                continue
             graph.add_edge(cause, node, type="invalid")
-            graph.nodes[node]["valid"] = not bool(invalidity_causes)
 
     for node in tqdm(graph.nodes, desc="Counting badness", unit="node"):
         out_edges = graph.out_edges(node, data=True)
